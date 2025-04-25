@@ -1,49 +1,22 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.integrate import cumulative_trapezoid
 
+# Intervalo de tiempo de 1 a 100 dividido en 500 puntos
+t = np.linspace(1, 100, 500)
 
-# TIEMPO DE 0 A 10 HORAS
-t = np.linspace(0, 10, 100)
-print(t[:5], "= 5 PRIMEROS VALORES DE T")
-# Función de tasa de transferencia: R(t)
-R = 5 + 2 * np.sin(np.pi * t)
-print(R[:5], "= 5 PRIMEROS VALORES DE R")
+# Función logarítmica que representa el tráfico acumulado
+R = 50 * np.log(t + 1)
 
-# Integral acumulada: volumen total de datos transmitidos
-D = cumulative_trapezoid(R, t, initial=0)
+# Derivada numérica para analizar la tasa de crecimiento
+dR_dt = np.gradient(R, t)
 
-# Derivada de R(t): variación de la tasa
-dR = np.gradient(R, t)
-
-# Modelo logístico de crecimiento de tráfico
-P0 = 10   # Valor inicial
-r = 0.5   # Tasa de crecimiento
-K = 100   # Capacidad máxima
-P = K / (1 + ((K - P0) / P0) * np.exp(-r * t))
-
-plt.figure(figsize=(10, 8))
-
-plt.subplot(3, 1, 1)
-plt.plot(t, R, color='blue')
-plt.title('Tasa de Transferencia R(t)')
-plt.ylabel('Mbps')
+# Graficamos la derivada
+plt.figure(figsize=(8, 5))
+plt.plot(t, dR_dt, label='dR/dt', color='purple')
+plt.title('Predicción de Saturación del Tráfico de Red')
+plt.xlabel('Tiempo')
+plt.ylabel('Tasa de Crecimiento dR/dt')
 plt.grid(True)
-
-plt.subplot(3, 1, 2)
-plt.plot(t, D, color='green')
-plt.title('Volumen Acumulado de Datos ∫R(t) dt')
-plt.ylabel('MB aprox.')
-plt.grid(True)
-
-plt.subplot(3, 1, 3)
-plt.plot(t, dR, color='red', label='dR/dt')
-plt.plot(t, P, 'k--', label='Crecimiento Logístico')
-plt.title('Variación de Tráfico y Modelo Logístico')
-plt.xlabel('Tiempo (horas)')
-plt.ylabel('Mbps / Usuarios')
 plt.legend()
-plt.grid(True)
-
 plt.tight_layout()
 plt.show()
